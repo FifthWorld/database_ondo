@@ -1,0 +1,12 @@
+# Subfolders to ignore
+logs/
+
+# Files to ignore 
+Thumbs.db
+thumbs.db
+*.log
+test-data/ondo/*.sql
+test-data/ondo/ondo.7z
+
+#Ingore temporary vpp files
+*.vpp~*
