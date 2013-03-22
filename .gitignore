@@ -5,8 +5,8 @@ logs/
 Thumbs.db
 thumbs.db
 *.log
-test-data/ondo/*.sql
-test-data/ondo/ondo.7z
+test-data/*.sql
+test-data/ondo.7z
 
 #Ingore temporary vpp files
 *.vpp~*
