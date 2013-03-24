@@ -1,347 +1,245 @@
-﻿-- Configure Hausa Language Translations for Code Reference values
+﻿--Codelist Changes - Ondo State, Nigeria
 
 
 
--- Reference Code Customizations for Ondo
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
 
-  
--- Reconfigure the Request Categories by adding Cadastral Services and Non Registration Services. Used by Application Numbering Business rule. 
+SET search_path = administrative, pg_catalog;
 
+--
+-- Data for Name: ba_unit_rel_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
+UPDATE administrative.ba_unit_rel_type SET display_value = 'Prior Title', status = 'c', description = '' WHERE code = 'priorTitle';
+UPDATE administrative.ba_unit_rel_type SET display_value = 'Root of Title', status = 'x', description = '' WHERE code = 'rootTitle';
+--
+-- Data for Name: ba_unit_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
+UPDATE administrative.ba_unit_type SET display_value = 'Basic Property Unit', status = 'c', description = 'This is the basic property unit that is used by default' WHERE code = 'basicPropertyUnit';
+UPDATE administrative.ba_unit_type SET display_value = 'Leased Unit', status = 'x', description = 'This is the basic property unit that is used by default' WHERE code = 'leasedUnit';
+UPDATE administrative.ba_unit_type SET display_value = 'Property Property Unit', status = 'x', description = 'This is the basic property unit that is used by default' WHERE code = 'propertyRightUnit';
+UPDATE administrative.ba_unit_type SET display_value = 'Administrative Unit', status = 'c', description = 'This is the basic property unit that is used by default' WHERE code = 'administrativeUnit';
 
--- Reset the Request Types (i.e. Service types) and Right Types available for SOLA Ondo
+--
+-- Data for Name: mortgage_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
 
--- Need to create some temp codes for the br_validation table so that its easier to clean up 
--- the existing request types. 
-
-INSERT INTO application.request_type(code, request_category_code, display_value)
-    SELECT  DISTINCT '1_' || LEFT(target_request_type_code,18), 
-			'nonRegServices',
-			target_request_type_code
-	FROM	system.br_validation WHERE target_request_type_code IS NOT NULL; 
- 		
-UPDATE 	system.br_validation SET target_request_type_code = '1_' || LEFT(target_request_type_code,18)
-WHERE target_request_type_code IS NOT NULL; 
- 
-DELETE FROM application.request_type_requires_source_type; 
-DELETE FROM application.request_type WHERE code NOT LIKE '1_%'; 
-DELETE FROM administrative.rrr_type; 
-
--- Update existing RRR Group types and add an additional group type
-
-UPDATE administrative.rrr_group_type SET status = 'x' WHERE code = 'responsibilities';
-INSERT INTO  administrative.rrr_group_type (code, display_value, status, description)
-VALUES ('system', 'System', 'x', 'Groups RRRs that exist solely to support SOLA system functionality'); 
-
--- Add the revised list of RRR Types for Ondo
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('primary', 'system', 'Primary', FALSE, FALSE, FALSE, 'x', 'System RRR type used by SOLA to represent the group of primary rights.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('easement', 'system', 'Easement', FALSE, FALSE, FALSE, 'c', 'System RRR type used by SOLA to represent the group of rights associated with easements (i.e. servitude and dominant.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('customaryType', 'rights', 'Customary', TRUE, TRUE, TRUE, 'c', 'Primary right indicating the property is owned under customary title.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('leaseHold', 'rights', 'Leasehold', TRUE, TRUE, TRUE, 'x', 'Primary right indicating the property is subject to a long term leasehold agreement.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('ownership', 'rights', 'Occupation', TRUE, TRUE, TRUE, 'x', 'Primary right indicating the property is owned under a Certificate of Occupation.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('stateOwnership', 'rights', 'Government', TRUE, TRUE, TRUE, 'c', 'Primary right indicating the property is state land owned by the State Government or the Federal Government.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('mortgage', 'restrictions', 'Mortgage', FALSE, FALSE, FALSE, 'c', 'Indicates the property is under mortgage.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('lease', 'rights', 'Lease', FALSE, FALSE, TRUE, 'c', 'Indicates the property is subject to a short or medium term lease agreement.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('caveat', 'restrictions', 'Caveat', FALSE, FALSE, TRUE, 'c', 'Indicates the property is subject to restrictions imposed by a caveat.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('order', 'restrictions', 'Court Order', FALSE, FALSE, FALSE, 'c', 'Indicates the property is subject to restrictions imposed by a court order.');	
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('proclamation', 'restrictions', 'Proclamation', FALSE, FALSE, FALSE, 'c', 'Indicates the property is subject to restrictions imposed by a proclamation that has completed the necessary statutory process.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('lifeEstate', 'restrictions', 'Life Estate', FALSE, FALSE, TRUE, 'x', 'Indicates the property is subject to a life estate.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('servitude', 'restrictions', 'Servient Estate', FALSE, FALSE, FALSE, 'c', 'Indicates the property is subject to an easement as the servient estate.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('dominant', 'rights', 'Dominant Estate', FALSE, FALSE, FALSE, 'c', 'Indicates the property has been granted rights to an easement over another property as the dominant estate.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('transmission', 'rights', 'Transmission', FALSE, FALSE, TRUE, 'c', 'Transmission.');
-INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
-    VALUES ('miscellaneous', 'rights', 'Miscellaneous', FALSE, FALSE, FALSE, 'c', 'Miscellaneous');
-	
-	
--- Add Registration Services
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('newFreehold','registrationServices','Create New Certificate of Occupancy','c',5,0.00,0.00,0.00,1,
-	'New CofO',NULL,NULL,'Create New Certificate of Occupancy');
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('regnOnTitle','registrationServices','Change Right or Restriction','c',5,100.00,0.00,0.00,1,
-	'<memorial>',NULL,'vary','Miscellaneous');
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('newOwnership','registrationServices','Transfer','c',5,100.00,0.00,0.00,1,
-	'Transfer to <name>','primary','vary','Transfer');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('mortgage','registrationServices','Record Mortgage','c',5,100.00,0.00,0.00,1,
-	'Mortgage to <lender>','mortgage','new','Mortgage');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('easement','registrationServices','Record Easement','c',5,100.00,0.00,0.00,1,
-	'Servient <easement type> over <parcel1> in favour of <parcel2> / Dominant <easement type>
-	in favour of <parcel1> over <parcel2>','easement','new','Easement');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('caveat','registrationServices','Record Caveat','c',5,100.00,0.00,0.00,1,
-	'Caveat in the name of <name>','caveat','new','Caveat');
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('newDigitalTitle','registrationServices','Capture Existing CofO Details','c',5,0.00,0.00,0.00,1,
-	'Certificate of Occupation converted from paper to digital record',NULL,NULL,'Conversion');
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('proclamation','registrationServices','Record Proclamation','c',5,100.00,0.00,0.00,1,
-	'Proclamation <proclamation>','proclamation','new','Proclamation');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('order','registrationServices','Record Court Order','c',5,100.00,0.00,0.00,1,
-	'Court Order <order>','order','new','Order');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('registrarCorrection','registrationServices','Correct Registry','c',5,0.00,0.00,0.00,1,
-	'Correction by Registrar to <reference>',NULL,NULL,'Registry Dealing');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('registrarCancel','registrationServices','Correct Registry (Cancel Right)','c',5,0.00,0.00,0.00,1,
-	'Correction by Registrar to <reference>',NULL,'cancel','Registry Dealing');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('varyCaveat','registrationServices','Change Caveat','c',5,100.00,0.00,0.00,1,
-	'Variation of caveat <reference>','caveat','vary','Variation of Caveat');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('transmission','registrationServices','Record Transmission','c',5,100.00,0.00,0.00,1,
-	'Transmission to <name>','transmission','new','Transmission');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('miscellaneous','registrationServices','Record Miscellaneous','c',5,100.00,0.00,0.00,1,
-	'<memorial>','miscellaneous','new','Miscellaneous');
-
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('systematicRegn','registrationServices','Systematic Registration','c',5,100.00,0.00,0.00,1,
-	'<memorial>','ownership','new','Certificate of Occupancy issued following systematic registration');	
--- Special zero fee services
-
-	
--- Survey Services 
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cadastreChange','cadastralServices','Record Plan','c',30,23.00,0.00,11.50,1,
-	NULL,NULL,NULL,'Plan');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('redefineCadastre','cadastralServices','Change Map','c',30,0.00,0.00,0.00,0,
-	NULL,NULL,NULL,NULL);
-
-	
--- Other Services	
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('regnStandardDocument','nonRegServices','Record Standard Memorandum','x',3,100.00,0.00,0.00,0,
-	NULL,NULL,NULL,'Standard Memoranda');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('regnPowerOfAttorney','nonRegServices','Record Power of Attorney','c',3,100.00,0.00,0.00,0,
-	NULL,NULL,NULL,'Power of Attorney');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cnclPowerOfAttorney','nonRegServices','Cancel Power of Attorney','c',3,100.00,0.00,0.00,0,
-	NULL,NULL,'cancel','Revocation of Power of Attorney');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cnclStandardDocument','nonRegServices','Cancel Standard Memorandum','x',3,100.00,0.00,0.00,0,
-	NULL,NULL,'cancel','Revocation of Standard Memoranda');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('certifiedCopy','informationServices','Produce/Print a Certified Copy','x',2,100.00,0.00,0.00,0,
-	NULL,NULL,NULL,'Application for a Certified True Copy');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cadastrePrint','informationServices','Map Print','x',1,0.00,0.00,0.00,0,
-	NULL,NULL,NULL,'');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cadastreExport','informationServices','Map Export','x',1,0.00,0.00,0.00,0,
-	NULL,NULL,NULL,'');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('cadastreBulk','informationServices','Bulk Map Export','x',1,0.00,0.00,0.00,0,
-	NULL,NULL,NULL,'');
-INSERT INTO application.request_type(code, request_category_code, display_value, 
-            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
-            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
-            description)
-    VALUES ('lodgeObjection','registrationServices','Process Objection or Dispute','c',5,100.00,0.00,0.00,1,
-	NULL,NULL,NULL, 'An objection or dispute that has been lodged with the Land Office impacting on the registration of rights and restrictions');	
-	
--- Recreate the constraints that were dropped above and correct any known code changes in the 
--- br_validation table.  
-UPDATE 	system.br_validation SET target_request_type_code = 'variationMortgage' 
-WHERE  target_request_type_code = '1_varyMortgage'; 
-
--- Reset the br_validation references to the request_type table
-UPDATE 	system.br_validation 
-SET target_request_type_code = REQ.display_value
-FROM application.request_type REQ
-WHERE target_request_type_code IS NOT NULL
-AND  target_request_type_code LIKE '1_%'
-AND  REQ.code = target_request_type_code;  
-
--- Clean up the temp codes. 
-DELETE FROM application.request_type WHERE code LIKE '1_%'; 
-	    
-	  
--- Customize the document types used in Ondo	  
-DELETE FROM source.administrative_source_type; 
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('agreement','Agreement','c','FALSE');  
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('application','Request Form','x','FALSE'); 
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('caveat','Caveat','c','FALSE'); 
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('courtOrder','Court Order','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('deed','Deed','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('lease','Lease','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('other','Miscellaneous','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('mortgage','Mortgage','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('cadastralSurvey','Plan','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('powerOfAttorney','Power of Attorney','c','TRUE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('proclamation','Proclamation','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('note','Office Note','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('idVerification','Proof of Identity','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('recordMaps','Record Map','x','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('registered','Migrated','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('surveyDataFile','Survey Data File','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('waiver','Waiver','x','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('will','Probated Will','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('qaChecklist','QA Checklist','x','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('systematicRegn','Application for Systematic Registration','c','FALSE');
-INSERT INTO source.administrative_source_type (code,display_value,status,is_for_registration)
-VALUES ('objection','Objection or Recorded Dispute','c','FALSE');
-INSERT INTO source.administrative_source_type(code, display_value, status, description) 
-VALUES ('cadastralMap', 'Cadastral Map::::Mappa Catastale', 'c', 'Extension to LADM');
+UPDATE mortgage_type SET display_value = 'Level Payment', status = 'x', description = '' WHERE code = 'levelPayment';
+UPDATE mortgage_type SET display_value = 'Linear', status = 'c', description = '' WHERE code = 'linear';
+UPDATE mortgage_type SET display_value = 'Micro Credit', status = 'x', description = '' WHERE code = 'microCredit';
 
 
--- Customize the documents to service associations
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('mortgage', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('variationMortgage', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('transmission', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('newOwnership', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('registerLease', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('subLease', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('registrarCorrection', 'note');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('registrarCancel', 'note');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('newFreehold', 'cadastralSurvey');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('caveat', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('removeCaveat', 'application');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('regnOnTitle', 'note');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('cadastreChange', 'cadastralSurvey');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('redefineCadastre', 'note');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('regnPowerOfAttorney', 'powerOfAttorney');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('regnStandardDocument', 'standardDocument');
+--
+-- Data for Name: rrr_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
 
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('planNoCoords', 'cadastralSurvey');
+UPDATE rrr_type SET display_value = 'Agriculture Activity', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'agriActivity';
+UPDATE rrr_type SET display_value = 'Common Ownership', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'commonOwnership';
+UPDATE rrr_type SET display_value = 'Customary Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'customaryRight';
+UPDATE rrr_type SET display_value = 'Firewood Collection', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'firewood';
+UPDATE rrr_type SET display_value = 'Fishing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'fishing';
+UPDATE rrr_type SET display_value = 'Grazing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'grazing';
+UPDATE rrr_type SET display_value = 'Informal Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'informalOccupation';
+UPDATE rrr_type SET display_value = 'Lease', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lease';
+UPDATE rrr_type SET display_value = 'Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
+UPDATE rrr_type SET display_value = 'Ownership', is_primary = true, party_required = true, description = '', status = 'c' WHERE code = 'occupation';
+UPDATE rrr_type SET display_value = 'Ownership Assumed', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'ownershipAssumed';
+UPDATE rrr_type SET display_value = 'Superficies', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'superficies';
+UPDATE rrr_type SET display_value = 'Tenancy', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'tenancy';
+UPDATE rrr_type SET display_value = 'Usufruct', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'usufruct';
+UPDATE rrr_type SET display_value = 'Water Rights', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterrights';
+UPDATE rrr_type SET display_value = 'Administrative Public Servitude', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'adminPublicServitude';
+UPDATE rrr_type SET display_value = 'Monument', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monument';
+UPDATE rrr_type SET display_value = 'Mortgage', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'mortgage';
+UPDATE rrr_type SET display_value = 'Building Restriction', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'noBuilding';
+UPDATE rrr_type SET display_value = 'Servitude', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'servitude';
+UPDATE rrr_type SET display_value = 'Monument Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monumentMaintenance';
+UPDATE rrr_type SET display_value = 'Waterway Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterwayMaintenance';
+UPDATE rrr_type SET display_value = 'Life Estate', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lifeEstate';
+UPDATE rrr_type SET display_value = 'Apartment', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'apartment';
+UPDATE rrr_type SET display_value = 'State Ownership', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'stateOwnership';
+UPDATE rrr_type SET display_value = 'Caveat', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'caveat';
+UPDATE rrr_type SET display_value = 'Historic Preservation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'historicPreservation';
+UPDATE rrr_type SET display_value = 'Limited Access (to Road)', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'limitedAccess';
 
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('systematicRegn', 'systematicRegn');
-INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code)
-VALUES('objection', 'objection');
+--
+-- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+UPDATE application.request_type SET display_value = 'Change to Cadastre', nr_days_to_complete = 30, base_fee = 25.00, area_base_fee = 0.10, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'cadastreChange';
+UPDATE application.request_type SET display_value = 'Redefine Cadastre', nr_days_to_complete = 30, base_fee = 25.00, area_base_fee = 0.10, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'redefineCadastre';
+UPDATE application.request_type SET display_value = 'Document Copy', nr_days_to_complete = 1, base_fee = 0.50, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'documentCopy';
+UPDATE application.request_type SET display_value = 'Vary Mortgage', nr_days_to_complete = 1, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation to mortgage with < bank name>', description = '', status = 'x' WHERE code = 'varyMortgage';
+UPDATE application.request_type SET display_value = 'New Freehold Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'newFreehold';
+UPDATE application.request_type SET display_value = 'Service Enquiry', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'serviceEnquiry';
+UPDATE application.request_type SET display_value = 'Deed Registration', nr_days_to_complete = 3, base_fee = 1.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'regnDeeds';
+UPDATE application.request_type SET display_value = 'Registration on Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.01, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'regnOnTitle';
+UPDATE application.request_type SET display_value = 'Registration of Power of Attorney', nr_days_to_complete = 3, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'regnPowerOfAttorney';
+UPDATE application.request_type SET display_value = 'Registration of Standard Document', nr_days_to_complete = 3, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'regnStandardDocument';
+UPDATE application.request_type SET display_value = 'Title Search', nr_days_to_complete = 1, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'titleSearch';
+UPDATE application.request_type SET display_value = 'Survey Plan Copy', nr_days_to_complete = 1, base_fee = 1.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'surveyPlanCopy';
+UPDATE application.request_type SET display_value = 'Cadastre Print', nr_days_to_complete = 1, base_fee = 0.50, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastrePrint';
+UPDATE application.request_type SET display_value = 'Cadastre Export', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.10, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastreExport';
+UPDATE application.request_type SET display_value = 'Cadastre Bulk Export', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.10, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastreBulk';
+UPDATE application.request_type SET display_value = 'Register Lease', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.01, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'registerLease';
+UPDATE application.request_type SET display_value = 'Occupation Noted', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.01, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'noteOccupation';
+UPDATE application.request_type SET display_value = 'Change of Ownership', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.02, nr_properties_required = 1, notation_template = 'Transfer to <name>', description = '', status = 'c' WHERE code = 'newOwnership';
+UPDATE application.request_type SET display_value = 'Register Usufruct', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<usufruct right granted to <name>', description = '', status = 'x' WHERE code = 'usufruct';
+UPDATE application.request_type SET display_value = 'Register Water Rights', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.02, nr_properties_required = 1, notation_template = 'Water Rights granted to <name>', description = '', status = 'x' WHERE code = 'waterRights';
+UPDATE application.request_type SET display_value = 'Register Mortgage', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Mortgage to <lender>', description = '', status = 'c' WHERE code = 'mortgage';
+UPDATE application.request_type SET display_value = 'Register Building Restriction', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Building Restriction', description = '', status = 'x' WHERE code = 'noBuilding';
+UPDATE application.request_type SET display_value = 'Register Servitude', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Servitude over <parcel1> in favour of <parcel2>', description = '', status = 'c' WHERE code = 'servitude';
+UPDATE application.request_type SET display_value = 'Establish Life Estate', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Life Estate for <name1> with Remainder Estate in <name2, name3>', description = '', status = 'x' WHERE code = 'lifeEstate';
+UPDATE application.request_type SET display_value = 'New Apartment Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Apartment Estate', description = '', status = 'x' WHERE code = 'newApartment';
+UPDATE application.request_type SET display_value = 'New State Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'State Estate', description = '', status = 'c' WHERE code = 'newState';
+UPDATE application.request_type SET display_value = 'Register Caveat', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Caveat in the name of <name>', description = '', status = 'x' WHERE code = 'caveat';
+UPDATE application.request_type SET display_value = 'Remove Caveat', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Caveat <reference> removed', description = '', status = 'x' WHERE code = 'removeCaveat';
+UPDATE application.request_type SET display_value = 'Register Historic Preservation Order', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Historic Preservation Order', description = '', status = 'x' WHERE code = 'historicOrder';
+UPDATE application.request_type SET display_value = 'Register Limited Road Access', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Limited Road Access', description = '', status = 'x' WHERE code = 'limitedRoadAccess';
+UPDATE application.request_type SET display_value = 'Vary Lease', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of Lease <reference>', description = '', status = 'x' WHERE code = 'varyLease';
+UPDATE application.request_type SET display_value = 'Vary Right (General)', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of <right> <reference>', description = '', status = 'x' WHERE code = 'varyRight';
+UPDATE application.request_type SET display_value = 'Remove Right (General)', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<right> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRight';
+UPDATE application.request_type SET display_value = 'Convert to Digital Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title converted to digital format', description = '', status = 'c' WHERE code = 'newDigitalTitle';
+UPDATE application.request_type SET display_value = 'Remove Restriction (General)', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<restriction> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRestriction';
+UPDATE application.request_type SET display_value = 'Cancel Title', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title Cancelled', description = '', status = 'x' WHERE code = 'cancelProperty';
+UPDATE application.request_type SET display_value = 'Vary Caveat', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation to Caveat <reference>', description = '', status = 'x' WHERE code = 'varyCaveat';
+UPDATE application.request_type SET display_value = 'Cancel Power of Attorney', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'cnclPowerOfAttorney';
+UPDATE application.request_type SET display_value = 'Withdraw Standard Document', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = 'To withdraw from use any standard document (such as standard mortgage or standard lease)', status = 'x' WHERE code = 'cnclStandardDocument';
+UPDATE application.request_type SET display_value = 'Systematic Registration Claim', nr_days_to_complete = 90, base_fee = 50.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title issued at completion of systematic registration', description = '', status = 'c' WHERE code = 'systematicRegn';
+UPDATE application.request_type SET display_value = 'Lodge Objection', nr_days_to_complete = 90, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'lodgeObjection';
+
+
+SET search_path = source, pg_catalog;
+
+--
+-- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
+--
+
+UPDATE administrative_source_type SET display_value = 'Agricultural Consent', status = 'x', description = '' WHERE code = 'agriConsent';
+UPDATE administrative_source_type SET display_value = 'Agricultural Lease', status = 'x', description = '' WHERE code = 'agriLease';
+UPDATE administrative_source_type SET display_value = 'Agricultural Notary Statement', status = 'x', description = '' WHERE code = 'agriNotaryStatement';
+UPDATE administrative_source_type SET display_value = 'Deed', status = 'c', description = '' WHERE code = 'deed';
+UPDATE administrative_source_type SET display_value = 'Lease', status = 'c', description = '' WHERE code = 'lease';
+UPDATE administrative_source_type SET display_value = 'Mortgage', status = 'c', description = '' WHERE code = 'mortgage';
+UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'c', description = '' WHERE code = 'title';
+UPDATE administrative_source_type SET display_value = 'Proclamation', status = 'c', description = '' WHERE code = 'proclamation';
+UPDATE administrative_source_type SET display_value = 'Court Order', status = 'c', description = '' WHERE code = 'courtOrder';
+UPDATE administrative_source_type SET display_value = 'Agreement', status = 'c', description = '' WHERE code = 'agreement';
+UPDATE administrative_source_type SET display_value = 'Contract for Sale', status = 'c', description = '' WHERE code = 'contractForSale';
+UPDATE administrative_source_type SET display_value = 'Will', status = 'x', description = '' WHERE code = 'will';
+UPDATE administrative_source_type SET display_value = 'Power of Attorney', status = 'c', description = '' WHERE code = 'powerOfAttorney';
+UPDATE administrative_source_type SET display_value = 'Standard Document', status = 'x', description = '' WHERE code = 'standardDocument';
+UPDATE administrative_source_type SET display_value = 'Cadastral Map', status = 'x', description = '' WHERE code = 'cadastralMap';
+UPDATE administrative_source_type SET display_value = 'Cadastral Survey', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'c', description = '' WHERE code = 'waiver';
+UPDATE administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'c', description = '' WHERE code = 'idVerification';
+UPDATE administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
+UPDATE administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'c', description = '' WHERE code = 'publicNotification';
+UPDATE administrative_source_type SET display_value = 'Systematic Registration Application', status = 'c', description = '' WHERE code = 'systematicRegn';
+UPDATE administrative_source_type SET display_value = 'Objection', status = 'c', description = '' WHERE code = 'objection';
+UPDATE administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
+UPDATE administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
+UPDATE administrative_source_type SET display_value = 'JPG Scanned Document', status = 'x', description = '' WHERE code = 'jpg';
+UPDATE administrative_source_type SET display_value = 'TIF Scanned Document', status = 'x', description = '' WHERE code = 'tif';
+--INSERT INTO administrative_source_type VALUES ('tif', 'Tif Scanned Document', 'x', NULL, false);
+
+SET search_path = application, pg_catalog;
+
+--
+-- Data for Name: request_type_requires_source_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+--DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'systematicRegn';
+--INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'systematicRegn');
+DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'lodgeObjection';
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('lodgeObjection', 'objection');
+
+
+SET search_path = cadastre, pg_catalog;
+
+--
+-- Data for Name: land_use_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
+--
+
+UPDATE land_use_type SET display_value = 'Commercial', status = 'c', description = '' WHERE code = 'commercial';
+UPDATE land_use_type SET display_value = 'Residential', status = 'c', description = '' WHERE code = 'residential';
+UPDATE land_use_type SET display_value = 'Industrial', status = 'c', description = '' WHERE code = 'industrial';
+UPDATE land_use_type SET display_value = 'Agricultural', status = 'c', description = '' WHERE code = 'agricultural';
+--INSERT INTO land_use_type VALUES ('agricultural', 'Agricultural::::ITALIANO', NULL, 'c');
+
+
+SET search_path = party, pg_catalog;
+
+--
+-- Data for Name: communication_type; Type: TABLE DATA; Schema: party; Owner: postgres
+--
+
+UPDATE communication_type SET display_value = 'e-Mail', status = 'c', description = '' WHERE code = 'email';
+UPDATE communication_type SET display_value = 'Fax', status = 'x', description = '' WHERE code = 'fax';
+UPDATE communication_type SET display_value = 'Post', status = 'c', description = '' WHERE code = 'post';
+UPDATE communication_type SET display_value = 'Phone', status = 'c', description = '' WHERE code = 'phone';
+UPDATE communication_type SET display_value = 'Courier', status = 'x', description = '' WHERE code = 'courier';
+
+--INSERT INTO communication_type VALUES ('courier', 'Courier::::Corriere', 'c', NULL);
+
+--
+-- Data for Name: group_party_type; Type: TABLE DATA; Schema: party; Owner: postgres
+--
+
+UPDATE group_party_type SET display_value = 'Tribe', status = 'c', description = '' WHERE code = 'tribe';
+UPDATE group_party_type SET display_value = 'Association', status = 'c', description = '' WHERE code = 'association';
+UPDATE group_party_type SET display_value = 'Family', status = 'c', description = '' WHERE code = 'family';
+UPDATE group_party_type SET display_value = 'Basic Administrative Unit Group', status = 'c', description = '' WHERE code = 'baunitGroup';
+
+--INSERT INTO group_party_type VALUES ('baunitGroup', 'Basic Administrative Unit Group::::Unita Gruppo Amministrativo di Base', 'x', NULL);
+
+--
+-- Data for Name: id_type; Type: TABLE DATA; Schema: party; Owner: postgres
+--
+
+UPDATE id_type SET display_value = 'National ID', status = 'c', description = '' WHERE code = 'nationalID';
+UPDATE id_type SET display_value = 'National Passport', status = 'c', description = '' WHERE code = 'nationalPassport';
+UPDATE id_type SET display_value = 'Other Passport', status = 'c', description = '' WHERE code = 'otherPassport';
+
+--INSERT INTO id_type VALUES ('otherPassport', 'Other Passport::::Altro Passaporto', 'c', 'A passport issued by another country::::Passaporto Fornito da un altro paese');
+
+--
+-- Data for Name: party_role_type; Type: TABLE DATA; Schema: party; Owner: postgres
+--
+
+UPDATE party_role_type SET display_value = 'Conveyor', status = 'x', description = '' WHERE code = 'conveyor';
+UPDATE party_role_type SET display_value = 'Notary', status = 'x', description = '' WHERE code = 'notary';
+UPDATE party_role_type SET display_value = 'Writer', status = 'x', description = '' WHERE code = 'writer';
+UPDATE party_role_type SET display_value = 'Surveyor', status = 'x', description = '' WHERE code = 'surveyor';
+UPDATE party_role_type SET display_value = 'Licenced Surveyor', status = 'x', description = '' WHERE code = 'certifiedSurveyor';
+UPDATE party_role_type SET display_value = 'Bank', status = 'c', description = '' WHERE code = 'bank';
+UPDATE party_role_type SET display_value = 'Money Provider', status = 'x', description = '' WHERE code = 'moneyProvider';
+UPDATE party_role_type SET display_value = 'Employee', status = 'x', description = '' WHERE code = 'employee';
+UPDATE party_role_type SET display_value = 'Farmer', status = 'x', description = '' WHERE code = 'farmer';
+UPDATE party_role_type SET display_value = 'Citizen', status = 'c', description = '' WHERE code = 'citizen';
+UPDATE party_role_type SET display_value = 'Approving Officer', status = 'x', description = '' WHERE code = 'stateAdministrator';
+UPDATE party_role_type SET display_value = 'Land Officer', status = 'x', description = '' WHERE code = 'landOfficer';
+UPDATE party_role_type SET display_value = 'Lodging Agent', status = 'x', description = '' WHERE code = 'lodgingAgent';
+UPDATE party_role_type SET display_value = 'Power of Attorney', status = 'c', description = '' WHERE code = 'powerOfAttorney';
+UPDATE party_role_type SET display_value = 'Transferee', status = 'x', description = '' WHERE code = 'transferee';
+UPDATE party_role_type SET display_value = 'Transferor', status = 'x', description = '' WHERE code = 'transferor';
+UPDATE party_role_type SET display_value = 'Applicant', status = 'c', description = '' WHERE code = 'applicant';
+
+
+--
+-- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
+--
+
+UPDATE source.spatial_source_type SET display_value = 'Field Sketch', status = 'c', description = '' WHERE code = 'fieldSketch';
+UPDATE source.spatial_source_type SET display_value = 'GNSS (GPS) Survey', status = 'c', description = '' WHERE code = 'gnssSurvey';
+UPDATE source.spatial_source_type SET display_value = 'Orthophoto or Satellite Imagery', status = 'c', description = '' WHERE code = 'orthophoto';
+UPDATE source.spatial_source_type SET display_value = 'Relative Measurements', status = 'x', description = '' WHERE code = 'relativeMeasurement';
+UPDATE source.spatial_source_type SET display_value = 'Topographical Map', status = 'c', description = '' WHERE code = 'topoMap';
+UPDATE source.spatial_source_type SET display_value = 'Video', status = 'x', description = '' WHERE code = 'video';
+UPDATE source.spatial_source_type SET display_value = 'Cadastral Survey', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c', description = '' WHERE code = 'surveyData';
+
+--INSERT INTO spatial_source_type VALUES ('surveyData', 'Survey Data (Coordinates)::::Rilevamento Data', 'c', 'Extension to LADM');
+
