@@ -11,6 +11,13 @@ DROP SEQUENCE IF EXISTS administrative.ba_unit_last_name_part_seq;
 DROP SEQUENCE IF EXISTS document.document_nr_seq;
 DROP SEQUENCE IF EXISTS source.source_la_nr_seq;
 
+CREATE SEQUENCE application.application_nr_seq
+  INCREMENT 1
+  MINVALUE 10700
+  MAXVALUE 19999
+  START 11000
+  CACHE 1;
+  
 CREATE SEQUENCE application.survey_plan_nr_seq
   INCREMENT 1
   MINVALUE 10700
