@@ -1,3 +1,4 @@
+
 ﻿--Changes added on Monday, 04/08/2013 by Sam
 
 ALTER TABLE application.application_historic
