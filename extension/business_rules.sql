@@ -18,7 +18,7 @@ CREATE SEQUENCE application.application_nr_seq
 	MINVALUE 0
 	MAXVALUE 99999
 	START 1
-	CACHE 1;,
+	CACHE 1;
 	
 --=======
 --CREATE SEQUENCE application.application_nr_seq
