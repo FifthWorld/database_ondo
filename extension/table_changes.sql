@@ -10,124 +10,6 @@ ADD date_of_birth date;
 ALTER TABLE party.party_historic
 ADD date_of_birth date;
 
---Changes added on tuesday 16/04/13 by Friday
-
--- Table: interim_data.state
-
--- DROP TABLE interim_data.state;
-
-CREATE TABLE interim_data.state
-(
-  code character varying(45) NOT NULL,
-  display_value character varying(45),
-  status_code character varying(45),
-  CONSTRAINT state_pk PRIMARY KEY (code )
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE interim_data.state
-  OWNER TO postgres;
-
-  -- Table: interim_data.lga
-
--- DROP TABLE interim_data.lga;
-
-CREATE TABLE interim_data.lga
-(
-  code character varying(45) NOT NULL,
-  state_code character varying(45) NOT NULL,
-  display_value character varying(45),
-  status_code character varying(45),
-  CONSTRAINT lga_pk PRIMARY KEY (code ),
-  CONSTRAINT state_code_fk FOREIGN KEY (state_code)
-    REFERENCES interim_data.state (code)MATCH SIMPLE
-    ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE interim_data.state
-  OWNER TO postgres;
-
--- Table: interim_data.ward
-
--- DROP TABLE interim_data.ward;
-
-CREATE TABLE interim_data.ward
-(
-  code character varying(100) NOT NULL,
-  lga_code character varying(100),
-  state_code character varying(100),
-  display_value character varying(100),
-  status_code character varying(100),
-  id serial NOT NULL,
-  CONSTRAINT id_pk PRIMARY KEY (id ),
-  CONSTRAINT state_code_fk FOREIGN KEY (state_code)
-      REFERENCES interim_data.state (code) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE interim_data.ward
-  OWNER TO postgres;
-
---populate state
-
-INSERT INTO interim_data.state
-( code , display_value ,status_code)
-VALUES
-( 'OD','Ondo State','c');
-
-INSERT INTO interim_data.lga
-( code ,state_code, display_value ,status_code)
-VALUES
-( 'AKR','OD','Akure South','c');
-
-INSERT INTO interim_data.lga
-( code ,state_code, display_value ,status_code)
-VALUES
-( 'KTP','OD','Okitipupa','c');
-
-INSERT INTO interim_data.ward
-( code , lga_code, state_code, display_value ,status_code)
-VALUES
-( 'WA','AKR','OD','WARD A','c');
-
-INSERT INTO interim_data.ward
-( code , lga_code, state_code, display_value ,status_code)
-VALUES
-( 'WB','AKR','OD','WARD B','c');
-
-INSERT INTO interim_data.ward
-( code , lga_code, state_code, display_value ,status_code)
-VALUES
-( 'WA','KTP','OD','WARD A','c');
-
-INSERT INTO interim_data.ward
-( code , lga_code, state_code, display_value ,status_code)
-VALUES
-( 'WB','KTP','OD','WARD B','c')
-
-
---the following code is a template for the application number generation for a ward in okitipupa. This should be customized for other wards and LGAs
----Done by Sam. 15/4/2013
-
-
-SELECT
-  --ward.code || ward.lga_code || ward.state_code||
-  state.code ||'/' || ward.lga_code || '/'|| ward.code ||'/'|| trim(to_char(nextval('application.application_nr_seq'), '0000')) as ApplicationNumber
-FROM
-  interim_data.lga,
-  interim_data.ward,
-  interim_data.state
-WHERE
-  ward.lga_code = lga.code AND
-  ward.state_code = state.code AND lga_code='KTP' AND ward.code='WA';
-
-
---SELECT to_char(now(), ''yymm'') || trim(to_char(nextval(''application.application_nr_seq''), ''0000'')) AS vl
 
 
 --Updating Status code for SLTR process only
@@ -175,7 +57,8 @@ UPDATE application.request_type SET display_value = 'Lodge Objection', nr_days_t
 
 --Updating Land use type
 
-UPDATE land_use_type SET display_value = 'Religious', status = 'c', description = '' WHERE code = 'religious';
-UPDATE land_use_type SET display_value = 'Recreational', status = 'c', description = '' WHERE code = 'recreational';
-UPDATE land_use_type SET display_value = 'Educational', status = 'c', description = '' WHERE code = 'educational';
+INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('religious','Religious','','c') ;
+INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('recreational','Recreational','','c') ;
+INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('educational','Educational','','c'); 
+
 

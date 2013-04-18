@@ -11,23 +11,20 @@ DROP SEQUENCE IF EXISTS administrative.ba_unit_last_name_part_seq;
 DROP SEQUENCE IF EXISTS document.document_nr_seq;
 DROP SEQUENCE IF EXISTS source.source_la_nr_seq;
 
---<<<<<<< HEAD
+
 --application number sequence updated by Sam on 4/08/2013 at 1:28am-- it is expected to start from one and loop through to 99999
+--each office should have a different sequence range. Considering three offices now, the chosen convention would be as follows
+---office 1: 1-1,999,999
+---office 2: 2,000,000-3,999,999
+---office 3: 3,000,000-4,999,999
+---the following sequence would  be for office 1
 CREATE SEQUENCE application.application_nr_seq
 	INCREMENT 1
 	MINVALUE 0
-	MAXVALUE 99999
+	MAXVALUE 1999999
 	START 1
 	CACHE 1;
-	
---=======
---CREATE SEQUENCE application.application_nr_seq
---  INCREMENT 1
- -- MINVALUE 10700
- -- MAXVALUE 19999
---  START 11000
- -- CACHE 1;
-  
+
 CREATE SEQUENCE application.survey_plan_nr_seq
   INCREMENT 1
   MINVALUE 10700
