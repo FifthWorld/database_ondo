@@ -1,4 +1,4 @@
-﻿  
+  
 ----- Existing Layer Updates ----
 -- Remove layers from core SOLA that are not used by Ondo, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
@@ -8,10 +8,10 @@
 -- Disable these map layers for the time being. 
 UPDATE system.config_map_layer
 SET item_order = 10, 
-	visible_in_start = FALSE,
-	url = 'http://localhost:8085/geoserver/sola/wms',
-	wms_layers = 'sola:nz_orthophoto',
-	active = FALSE
+	visible_in_start = TRUE,
+	url = 'http://localhost:8004/geoserver/sola/wms',
+	wms_layers = 'sola:AkureOndoNigeria_GeoTiff_FileFormat',
+	active = TRUE
 WHERE "name" = 'orthophoto';
 
 UPDATE system.config_map_layer
@@ -303,10 +303,10 @@ ALTER TABLE cadastre.wards
 UPDATE public.geometry_columns SET srid = 32631; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32631' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '-15000' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '650000' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '175000' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '862000' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '608922.708' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '621784' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '882297' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '875248' WHERE "name" = 'map-north'; 
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;
