@@ -1,4 +1,4 @@
---Changes added on Monday, 04/08/2013 by Sam
+﻿--Changes added on Monday, 04/08/2013 by Sam
 
 ALTER TABLE application.application_historic
 ADD document_verified boolean NOT NULL DEFAULT false;
@@ -57,8 +57,8 @@ UPDATE application.request_type SET display_value = 'Lodge Objection', nr_days_t
 
 --Updating Land use type
 
-INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('religious','Religious','','c') ;
-INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('recreational','Recreational','','c') ;
-INSRERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('educational','Educational','','c'); 
+INSERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('religious','Religious','','c') ;
+INSERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('recreational','Recreational','','c') ;
+INSERT INTO Cadastre.land_use_type (code, display_value ,description ,status) VALUES('educational','Educational','','c'); 
 
 
