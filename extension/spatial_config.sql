@@ -9,7 +9,7 @@
 UPDATE system.config_map_layer
 SET item_order = 10, 
 	visible_in_start = TRUE,
-	url = 'http://localhost:8004/geoserver/sola/wms',
+	url = 'http://localhost:8085/geoserver/sola/wms',
 	wms_layers = 'sola:AkureOndoNigeria_GeoTiff_FileFormat',
 	active = TRUE
 WHERE "name" = 'orthophoto';
