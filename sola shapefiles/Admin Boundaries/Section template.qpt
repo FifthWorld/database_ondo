@@ -1,0 +1,37 @@
+<Composer title="Composer 1" visible="1">
+ <ComposerMap keepLayerSet="true" id="0" previewMode="Cache" drawCanvasItems="true">
+  <Extent ymin="803389" xmin="739798" ymax="803681" xmax="740161"/>
+  <LayerSet>
+   <Layer>LGA20130425162533368</Layer>
+   <Layer>Ward20130425165852495</Layer>
+   <Layer>Section20130426140812511</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C1R120130425150754475</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C2R120130425150728357</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C2R320130425150648326</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C2R220130425150643097</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C1R320130425150639663</Layer>
+   <Layer>AkureOndoNigeria_2012_2013_50cm_Colr_C1R220130425150637683</Layer>
+  </LayerSet>
+  <Grid gridStyle="1" crossLength="10" penColorRed="0" penColorBlue="0" intervalX="100" offsetX="0" intervalY="100" offsetY="0" show="0" penWidth="0" penColorGreen="0">
+   <Annotation direction="0" precision="3" position="1" frameDistance="1" show="0" font="Lucida Grande,13,-1,5,50,0,0,0,0,0"/>
+  </Grid>
+  <ComposerItem width="363" x="3.69407" y="4.0314" rotation="340" height="292" frame="true" outlineWidth="0.3" zValue="1" lastValidViewScaleFactor="2.0906" id="" positionLock="false">
+   <FrameColor alpha="255" red="0" blue="0" green="0"/>
+   <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+  </ComposerItem>
+ </ComposerMap>
+ <ComposerPicture pictureWidth="22.7797" file="/Applications/QGIS.app/Contents/Resources/svg/north_arrows/NorthArrow5.svg" pictureHeight="30.3027" mapId="0">
+  <ComposerItem width="31.7701" x="368.951" y="21.3291" rotation="340" height="36.2664" frame="true" outlineWidth="0.3" zValue="3" lastValidViewScaleFactor="2.0906" id="" positionLock="false">
+   <FrameColor alpha="255" red="0" blue="0" green="0"/>
+   <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+  </ComposerItem>
+ </ComposerPicture>
+ <ComposerScaleBar segmentMillimeters="25" numMapUnitsPerScaleBarUnit="1" numSegments="4" height="5" alignment="0" labelBarSpace="3" outlineWidth="1" numSegmentsLeft="0" style="Single Box" unitLabel="" font="Lucida Grande,12,-1,5,50,0,0,0,0,0" mapId="0" boxContentSpace="1" numUnitsPerSegment="25">
+  <BrushColor red="0" blue="0" green="0"/>
+  <ComposerItem width="110" x="7.65329" y="277.91" rotation="0" height="14.0594" frame="true" outlineWidth="0.3" zValue="5" lastValidViewScaleFactor="2.0906" id="" positionLock="false">
+   <FrameColor alpha="255" red="0" blue="0" green="0"/>
+   <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+  </ComposerItem>
+ </ComposerScaleBar>
+ <Composition printResolution="300" paperWidth="420" snapGridOffsetX="0" snapGridResolution="10" snapGridOffsetY="0" snapping="0" paperHeight="297" printAsRaster="0"/>
+</Composer>

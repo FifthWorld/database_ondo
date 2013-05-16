@@ -14,6 +14,7 @@ set testDataPath=test-data\
 set rulesPath=rules\
 set extensionPath=extension\
 set utilitiesPath=utilities\
+set migrationPath=migration\
 
 set /p host= Host name [%host%] :
 
@@ -52,12 +53,26 @@ echo Loading SOLA business rules... >> build.log 2>&1
 
 echo Loading Ondo Extensions...
 echo Loading Ondo Extensions... >> build.log 2>&1
-echo Loading Table Changes... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%table_changes.sql >> build.log 2>&1
+
 echo Loading Reference Data... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%reference_data.sql >> build.log 2>&1
+REM order Changed by Sam
+echo Loading Table Changes... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%table_changes.sql >> build.log 2>&1
+
+REM Creating the new section layer
+echo Creating the section layer... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%create_new_layer.sql >> build.log 2>&1
+
 echo Loading Spatial Config... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%spatial_config.sql >> build.log 2>&1
+echo Loading Populate Shapefile... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
+
+REM populate_spatial_unit_group
+echo Populating spatial unit group... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%populate_spatial_unit_group.sql >> build.log 2>&1
+
 echo Loading Ondo Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
 

@@ -1,4 +1,4 @@
-  
+﻿  
 ----- Existing Layer Updates ----
 -- Remove layers from core SOLA that are not used by Ondo, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
@@ -9,7 +9,7 @@
 UPDATE system.config_map_layer
 SET item_order = 10, 
 	visible_in_start = TRUE,
-	url = 'http://localhost:8004/geoserver/sola/wms',
+	url = 'http://localhost:8085/geoserver/sola/wms',
 	wms_layers = 'sola:AkureOndoNigeria_GeoTiff_FileFormat',
 	active = TRUE
 WHERE "name" = 'orthophoto';
@@ -40,7 +40,7 @@ WHERE "name" = 'roads';
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards');
+DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards', 'Section');
 
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
@@ -53,6 +53,11 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES (uuid_generate_v1(), 'Wards', 'all', 'polygon', 'mixed', 'test');
 
+--Changes made by Akande Adeoluwa to add a new layer for sections - 09/05/2013
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Section', 'all', 'polygon', 'mixed', 'test');
+
+
 --UPDATE system.config_map_layer
 
 DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards');
@@ -64,13 +69,21 @@ INSERT INTO system.query(name, sql, description)
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getWards', 'select id, label, st_asewkb(geom) as the_geom from cadastre.wards where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Wards');
 
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards');
+--Changes made by Akande Adeoluwa to add a new layer for sections - 13/05/2013
+INSERT INTO system.query(name, sql, description)
+    VALUES ('SpatialResult.getSection', 'select id, label, st_asewkb(geom) as the_geom from cadastre.section where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Section');
+
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'section');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('wards', 'Wards', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWards');
+
+--Changes made by Akande Adeoluwa to add a new layer for sections - 13/05/2013
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('section', 'Section', 'pojo', true, true, 80, 'section.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
 
 --DROP VIEW cadastre.lga;
 
@@ -92,6 +105,15 @@ CREATE OR REPLACE VIEW cadastre.wards AS
 ALTER TABLE cadastre.wards
   OWNER TO postgres; 
      
+--Changes made by Akande Adeoluwa to add a new layer for sections - 13/05/2013
+CREATE OR REPLACE VIEW cadastre.section AS 
+ SELECT su.id, su.label, su.geom
+   FROM cadastre.level l, cadastre.spatial_unit su
+  WHERE l.id::text = su.level_id::text AND l.name::text = 'Section'::text;
+
+ALTER TABLE cadastre.section
+  OWNER TO postgres; 
+
 -- Name Translations
 --UPDATE system.config_map_layer SET title = 'Applications::::Talosaga' WHERE "name" = 'applications';
  
@@ -300,13 +322,15 @@ ALTER TABLE cadastre.wards
 
  
  --SET NEW SRID and OTHER ONDO PARAMETERS
+ --Changes made by Akande Adeoluwa  - 13/05/2013
 UPDATE public.geometry_columns SET srid = 32631; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32631' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '608922.708' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '621784' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '882297' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '875248' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '697954' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '775803' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '786985' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '830413' WHERE "name" = 'map-north'; 
+ 
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;
