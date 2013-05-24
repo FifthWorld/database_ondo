@@ -60,8 +60,8 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 
 --UPDATE system.config_map_layer
 
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards');
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'section');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSection');
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
