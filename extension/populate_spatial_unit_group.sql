@@ -20,7 +20,7 @@ INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom,
 --------------- Wards
 --- test the inconsistencies in the geometry
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
-select lga_group.name || '/' || w.ward, 3, w.ward, lga_group.name || '/' || w.ward, w.the_geom, 'test', 0
+select distinct(lga_group.name ||'/'|| w.ward_temp), 3, w.ward_temp, lga_group.name||'/'||w.ward_temp, w.the_geom, 'test', 0
 from cadastre.spatial_unit_group as lga_group,  interim_data."Ward" as w 
 where lga_group.hierarchy_level = 2 and st_intersects(lga_group.geom, st_pointonsurface(w.the_geom));
 
