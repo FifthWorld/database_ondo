@@ -49,8 +49,6 @@ begin
    where ST_Intersects(ST_PointOnSurface(last_part), sg.geom)
    and sg.hierarchy_level = 3
    ;
-
-
   return val_to_return;
 end;
 $$ LANGUAGE plpgsql;
