@@ -14,6 +14,17 @@ SET item_order = 10,
 	active = TRUE
 WHERE "name" = 'orthophoto';
 
+
+--- This is for correctly setting up the converted orthophoto imagery onto localhost
+--UPDATE system.config_map_layer 
+--SET item_order = 10, 
+--url = 'http://localhost:8085/geoserver/ondo/wms',
+--wms_layers= 'ondo:orthophoto',
+--wms_format= 'image/jpeg',
+--visible_in_start = TRUE,
+--active = TRUE
+--WHERE name='orthophoto'
+
 UPDATE system.config_map_layer
 SET item_order = 9, 
     visible_in_start = FALSE,

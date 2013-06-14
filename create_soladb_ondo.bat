@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 
 set psql_path=%~dp0
 set psql_path="%psql_path%psql\psql.exe"
@@ -75,6 +75,10 @@ echo Populating spatial unit group... >> build.log 2>&1
 
 echo Loading Ondo Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
+
+echo Loading Ondo Cadastre Functions... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
+
 
 
 echo Extracting Ondo data files...
