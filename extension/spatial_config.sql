@@ -96,6 +96,23 @@ INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('section', 'Section', 'pojo', true, true, 80, 'section.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
 
+--Changes made by Paola to add a new search query for sections - 29/06/2013
+
+delete from system.map_search_option  where code = 'SECTION';
+delete from system.query  where name = 'map_search.cadastre_object_by_section';
+
+insert into system.query(name, sql) values('map_search.cadastre_object_by_section', 'select s.id, s.label, st_asewkb(s.geom) as the_geom from  cadastre.spatial_unit s, 
+cadastre.spatial_unit_group sg 
+where compare_strings(#{search_string}, sg.name) 
+and s.label= sg.name and sg.hierarchy_level=4
+and ST_Intersects(ST_PointOnSurface(s.geom), sg.geom)
+ limit 30');
+
+insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) 
+values('SECTION', 'Section', 'map_search.cadastre_object_by_section', true, 3, 50);
+
+     
+
 --DROP VIEW cadastre.lga;
 
 CREATE OR REPLACE VIEW cadastre.lga AS 
