@@ -79,6 +79,10 @@ echo Loading Ondo Business Rules... >> build.log 2>&1
 echo Loading Ondo Cadastre Functions... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
 
+echo Loading Ondo Systematic Registration Reports... >> build.log 2>&1
++%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%systematic_registration_reports.sql >> build.log 2>&1
+ 
+
 
 
 echo Extracting Ondo data files...

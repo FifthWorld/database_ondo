@@ -23,7 +23,7 @@ WHERE "name" = 'orthophoto';
 --wms_format= 'image/jpeg',
 --visible_in_start = TRUE,
 --active = TRUE
---WHERE name='orthophoto'
+--WHERE name='orthophoto';
 
 UPDATE system.config_map_layer
 SET item_order = 9, 
@@ -104,8 +104,10 @@ delete from system.query  where name = 'map_search.cadastre_object_by_section';
 insert into system.query(name, sql) values('map_search.cadastre_object_by_section', 'select s.id, s.label, st_asewkb(s.geom) as the_geom from  cadastre.spatial_unit s, 
 cadastre.spatial_unit_group sg 
 where compare_strings(#{search_string}, sg.name) 
-and s.label= sg.name and sg.hierarchy_level=4
+and s.label= sg.label and sg.hierarchy_level=4
 and ST_Intersects(ST_PointOnSurface(s.geom), sg.geom)
+and s.level_id in (select distinct(s1.level_id) from cadastre.spatial_unit s1, cadastre.level cl where s1.level_id = cl.id 
+and cl.name=''Section'' )
  limit 30');
 
 insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) 
