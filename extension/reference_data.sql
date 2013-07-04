@@ -133,7 +133,7 @@ UPDATE administrative_source_type SET display_value = 'Will', status = 'x', desc
 UPDATE administrative_source_type SET display_value = 'Power of Attorney', status = 'c', description = '' WHERE code = 'powerOfAttorney';
 UPDATE administrative_source_type SET display_value = 'Standard Document', status = 'x', description = '' WHERE code = 'standardDocument';
 UPDATE administrative_source_type SET display_value = 'Cadastral Map', status = 'x', description = '' WHERE code = 'cadastralMap';
-UPDATE administrative_source_type SET display_value = 'Cadastral Survey', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE administrative_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'c', description = '' WHERE code = 'waiver';
 UPDATE administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'c', description = '' WHERE code = 'idVerification';
 UPDATE administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
@@ -238,8 +238,48 @@ UPDATE source.spatial_source_type SET display_value = 'Orthophoto or Satellite I
 UPDATE source.spatial_source_type SET display_value = 'Relative Measurements', status = 'x', description = '' WHERE code = 'relativeMeasurement';
 UPDATE source.spatial_source_type SET display_value = 'Topographical Map', status = 'c', description = '' WHERE code = 'topoMap';
 UPDATE source.spatial_source_type SET display_value = 'Video', status = 'x', description = '' WHERE code = 'video';
-UPDATE source.spatial_source_type SET display_value = 'Cadastral Survey', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.spatial_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c', description = '' WHERE code = 'surveyData';
 
 --INSERT INTO spatial_source_type VALUES ('surveyData', 'Survey Data (Coordinates)::::Rilevamento Data', 'c', 'Extension to LADM');
+
+
+--
+---------- Updates for LH tickets #3,16,5   (04/07/2013) ----
+--
+--
+-- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
+--
+UPDATE source.administrative_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+
+--
+-- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
+--
+
+UPDATE source.spatial_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+
+
+
+
+--
+-- Data for Name: rrr_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
+
+UPDATE administrative.rrr_type SET display_value = 'Public Land'  WHERE code = 'stateOwnership';
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('regnDeeds', 'responsibilities', 'Deed Registration', true, false, false, 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('regnPowerOfAttorney', 'responsibilities', 'Power of Attorney', true, false, false, 'c');
+
+--
+-- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+
+UPDATE application.request_type SET rrr_type_code = null, type_action_code = null  WHERE code = 'systematicRegn';
+
+--
+-- Data for Name: language; Type: TABLE DATA; Schema: system; Owner: postgres
+--
+
+delete from system.language where code =  'it-IT' ;
+
 

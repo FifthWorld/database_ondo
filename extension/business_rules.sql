@@ -1,4 +1,4 @@
--- Recreate the Sequences used for numbering applications
+﻿-- Recreate the Sequences used for numbering applications
 DROP SEQUENCE IF EXISTS application.application_nr_seq;
 DROP SEQUENCE IF EXISTS application.survey_plan_nr_seq;
 DROP SEQUENCE IF EXISTS application.non_register_nr_seq;
@@ -194,28 +194,67 @@ WHERE br_id = 'generate-notation-reference-nr';
 
 
 -- Revise the function used to detrmine if a cadastre object is valid. 
-DROP FUNCTION cadastre.cadastre_object_name_is_valid(character varying, character varying);
+--DROP FUNCTION cadastre.cadastre_object_name_is_valid(character varying, character varying);
 
-CREATE OR REPLACE FUNCTION cadastre.cadastre_object_name_is_valid(name_firstpart character varying, name_lastpart character varying)
-  RETURNS boolean AS
-$BODY$
-begin
-  IF name_firstpart is null THEN RETURN false; END IF;
-  IF name_lastpart is null THEN RETURN false; END IF;
-  IF NOT ((name_firstpart SIMILAR TO 'Lot [0-9]+') OR (name_firstpart SIMILAR TO '[0-9]+')) THEN RETURN false;  END IF;
-  IF NOT ((name_lastpart SIMILAR TO '[0-9 ]+') OR (name_lastpart SIMILAR TO 'CUSTOMARY LAND') OR (name_lastpart SIMILAR TO 'CTGT [0-9]+') OR (name_lastpart SIMILAR TO 'LC [0-9]+')) THEN RETURN false;  END IF;
-  RETURN true;
-end;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION cadastre.cadastre_object_name_is_valid(character varying, character varying)
-  OWNER TO postgres;
+--CREATE OR REPLACE FUNCTION cadastre.cadastre_object_name_is_valid(name_firstpart character varying, name_lastpart character varying)
+--  RETURNS boolean AS
+--$BODY$
+--begin
+--  IF name_firstpart is null THEN RETURN false; END IF;
+--  IF name_lastpart is null THEN RETURN false; END IF;
+--  IF NOT ((name_firstpart SIMILAR TO 'Lot [0-9]+') OR (name_firstpart SIMILAR TO '[0-9]+')) THEN RETURN false;  END IF;
+--  IF NOT ((name_lastpart SIMILAR TO '[0-9 ]+') OR (name_lastpart SIMILAR TO 'CUSTOMARY LAND') OR (name_lastpart SIMILAR TO 'CTGT [0-9]+') OR (name_lastpart SIMILAR TO 'LC [0-9]+')) THEN RETURN false;  END IF;
+--  RETURN true;
+--end;
+--$BODY$
+--  LANGUAGE plpgsql VOLATILE
+--  COST 100;
+--ALTER FUNCTION cadastre.cadastre_object_name_is_valid(character varying, character varying)
+--  OWNER TO postgres;
  
 --Temporary Change for purposes of initial customisation in Ondo
 
 UPDATE system.br_validation SET severity_code = 'medium'
 WHERE severity_code = 'critical';
+
+
+-- Updates from Kano LH  4/7/2013
+--LH # 14 DISABLE
+--target-ba_unit-check-if-pending
+--target-parcels-check-isapolygon
+--target-parcels-check-nopending
+--target-parcels-present
+
+update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-ba_unit-check-if-pending'
+update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-check-isapolygon'
+update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-check-nopending'
+update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-present'
+
+
+--LH # 15
+--CHANGE cadastre-object-check-name for NIGERIA UPI Standard
+
+CREATE OR REPLACE FUNCTION cadastre.cadastre_object_name_is_valid(name_firstpart character varying, name_lastpart character varying)
+  RETURNS boolean AS
+$BODY$
+
+  
+BEGIN
+ if name_firstpart is null then return false; end if;
+  if name_lastpart is null then return false; end if;
+  if not (name_firstpart similar to '[0-9]+') then return false;  end if;
+  
+  if name_lastpart not in (select sg.name 
+			   from cadastre.spatial_unit_group sg
+		           where  sg.hierarchy_level = 3) then return false;  end if;
+
+  return true;
+end;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION cadastre.cadastre_object_name_is_valid(character varying, character varying) OWNER TO postgres;
+
 
 
 
