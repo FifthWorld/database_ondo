@@ -60,6 +60,12 @@ REM order Changed by Sam
 echo Loading Table Changes... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%table_changes.sql >> build.log 2>&1
 
+
+REM Loading LRB-Specific Changes
+echo Loading LRB-Specific Changes... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%lrb_changes.sql >> build.log 2>&1
+
+
 REM Creating the new section layer
 echo Creating the section layer... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%create_new_layer.sql >> build.log 2>&1

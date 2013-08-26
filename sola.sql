@@ -6939,10 +6939,7 @@ insert into system.config_map_layer(name, title, type_code, active, visible_in_s
 --Table system.config_map_layer_type ----
 DROP TABLE IF EXISTS system.config_map_layer_type CASCADE;
 CREATE TABLE system.config_map_layer_type(
-    code varchar(20) NOT NULL,
-    display_value varchar(250) NOT NULL,
-    status char(1) NOT NULL,
-    description varchar(555),
+   
 
     -- Internal constraints
     
