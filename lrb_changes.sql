@@ -76,6 +76,36 @@ ALTER TABLE party.party ADD date_of_birth date;
 ALTER TABLE party.party ADD occupation varchar(40);
 ALTER TABLE party.party ADD corporate_name varchar(40);
 
+--Adding present_home_address_id field
+ALTER TABLE party.party ADD present_home_address_id varchar(40);
+
+
+
+--Adding employer_name field
+ALTER TABLE party.party ADD employer_name varchar(40);
+
+--adding employer address id
+ALTER TABLE party.party ADD employer_address_id varchar(40);
+
+--Adding employer_name field
+--ALTER TABLE party.party ADD lga_id varchar(40);
+
+ALTER TABLE party.party
+ADD CONSTRAINT party_employer_address_id FOREIGN KEY (employer_address_id)
+      REFERENCES address.address (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+ALTER TABLE party.party 
+	ADD CONSTRAINT party_present_home_address_id_fk11 FOREIGN KEY (present_home_address_id)
+      REFERENCES address.address (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE party.party 
+     ADD CONSTRAINT party_lga_id_fk13 FOREIGN KEY (lga_code)
+      REFERENCES party.lga_type (lga_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
 CREATE TABLE application.capacity_type
 (
     code varchar(20) PRIMARY KEY,
@@ -120,3 +150,29 @@ ALTER TABLE application.application_property_historic ADD capacity_in_which_prop
 ALTER TABLE application.application_property_historic ADD land_use_code character varying(20);
 ALTER TABLE application.application_property_historic ADD location_of_property character varying(45);
 ALTER TABLE application.application_property_historic ADD property_duration character varying(45);
+
+
+--Create the Development stage Type table jare
+CREATE TABLE application.development_stage_type
+(
+  code character varying(20) PRIMARY KEY,
+  display_value character varying(250) NOT NULL,
+  status character(1) NOT NULL,
+  description character varying(555)
+);
+
+--Now insert sampl data into development_stage and capacity_type tables
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('completed','Completed','','c'); 
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('fenced','Fenced','','c'); 
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('cleared','Cleared','','c'); 
+
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('purchased','Purchased','','c'); 
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('inherited','Inherited','','c'); 
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('leased','Leased','','c'); 
+
+--Increase the applcation number field
+--ALTER TABLE application.application ALTER COLUMN nr TYPE character varying(45) USING nr::character;
+
+
+--insert sampled ata into state of origin and lga of origin
+
