@@ -50,18 +50,21 @@ insert into system.approle(code, display_value, status, description) values('new
 
 
 --Now create tables within the party schema to house the new fields that were added from the Manual form
+--using the serial data type for auto incrementing of the state_id
+--aslo the state code must be unique
 CREATE TABLE party.state_origin_type
 (
-    state_id varchar(40) PRIMARY KEY,
+    state_id SERIAL NOT NULL PRIMARY KEY,
     code varchar(20) NOT NULL,
     display_value varchar(250) NOT NULL,
     status char(1) NOT NULL,
-    description varchar(555)
+    description varchar(555),
+    CONSTRAINT unique_state_code UNIQUE (code)
 );
 
 CREATE TABLE party.lga_type
 (
-	lag_id varchar(40) PRIMARY KEY,
+	lga_id SERIAL  NOT NULL PRIMARY KEY,
     state_id varchar(40) ,
     code varchar(20) NOT NULL,
     display_value varchar(250) NOT NULL,
@@ -69,12 +72,55 @@ CREATE TABLE party.lga_type
     description varchar(555)
 );
 
-ALTER TABLE party.party ADD state_of_origin varchar(40);
-ALTER TABLE party.party ADD lga_code varchar(40);
+ALTER TABLE party.party ADD state_of_origin varchar(40); --to ref the state_id in party.state_origin_type
+ALTER TABLE party.party ADD lga_code varchar(40); --to ref the lga_id in party.lga_type
 ALTER TABLE party.party ADD home_town varchar(40);
 ALTER TABLE party.party ADD date_of_birth date;
 ALTER TABLE party.party ADD occupation varchar(40);
 ALTER TABLE party.party ADD corporate_name varchar(40);
+
+--Adding present_home_address_id field
+ALTER TABLE party.party ADD present_home_address_id varchar(40);
+
+
+
+--Adding employer_name field
+ALTER TABLE party.party ADD employer_name varchar(40);
+
+--adding employer address id
+ALTER TABLE party.party ADD employer_address_id varchar(40);
+
+--Adding employer_name field
+--ALTER TABLE party.party ADD lga_id varchar(40);
+
+ALTER TABLE party.party
+ADD CONSTRAINT party_employer_address_id FOREIGN KEY (employer_address_id)
+      REFERENCES address.address (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+ALTER TABLE party.party 
+	ADD CONSTRAINT party_present_home_address_id_fk11 FOREIGN KEY (present_home_address_id)
+      REFERENCES address.address (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE party.party 
+     ADD CONSTRAINT party_lga_id_fk13 FOREIGN KEY (lga_code)
+      REFERENCES party.lga_type (lga_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+ALTER TABLE party.party 
+     ADD CONSTRAINT party_state_id_fk13 FOREIGN KEY (state_of_origin)
+      REFERENCES party.state_origin_type (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+ALTER TABLE party.lga_type
+     ADD CONSTRAINT party_lga_type_fk13 FOREIGN KEY (state_id)
+      REFERENCES party.state_origin_type (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
 
 CREATE TABLE application.capacity_type
 (
@@ -120,3 +166,53 @@ ALTER TABLE application.application_property_historic ADD capacity_in_which_prop
 ALTER TABLE application.application_property_historic ADD land_use_code character varying(20);
 ALTER TABLE application.application_property_historic ADD location_of_property character varying(45);
 ALTER TABLE application.application_property_historic ADD property_duration character varying(45);
+
+
+--Create the Development stage Type table jare
+CREATE TABLE application.development_stage_type
+(
+  code character varying(20) PRIMARY KEY,
+  display_value character varying(250) NOT NULL,
+  status character(1) NOT NULL,
+  description character varying(555)
+);
+
+--Now insert sampl data into development_stage and capacity_type tables
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('completed','Completed','','c'); 
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('fenced','Fenced','','c'); 
+INSERT INTO application.development_stage_type (code, display_value ,description ,status) VALUES('cleared','Cleared','','c'); 
+
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('purchased','Purchased','','c'); 
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('inherited','Inherited','','c'); 
+INSERT INTO application.capacity_type (code, display_value ,description ,status) VALUES('leased','Leased','','c'); 
+
+--ALTER TABLE application.application ALTER COLUMN nr TYPE character varying(45) USING nr::character;
+
+
+--insert sample data into state of origin and lga of origin
+INSERT INTO party.state_origin_type (state_id, code, display_value ,description ,status) VALUES ()
+
+
+
+--ensure the lga_id field is properly created in the creation script ..DONE!
+
+-- To increase the application number field DONE!
+--Now dropping view
+DROP VIEW application.systematic_registration_certificates;
+--Now, adjust the size of the application nr column and then recreate the view
+ALTER TABLE application.application ALTER COLUMN nr TYPE character varying(45) USING nr::character;
+
+--now, recreate view
+CREATE OR REPLACE VIEW application.systematic_registration_certificates AS 
+ SELECT aa.nr, co.name_firstpart, co.name_lastpart, su.ba_unit_id, sg.name::text AS name
+   FROM application.application_status_type ast, cadastre.spatial_unit_group sg, cadastre.land_use_type lu, cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s
+  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom) AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text OR (ap.name_firstpart::text || ap.name_lastpart::text) = (bu.name_firstpart::text || bu.name_lastpart::text)) AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND aa.status_code::text = ast.code::text AND (aa.status_code::text = 'approved'::text OR aa.status_code::text = 'archived'::text) AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text;
+
+ALTER TABLE application.systematic_registration_certificates
+  OWNER TO postgres;
+
+
+
+
+
+--associate the newCofO service with the Super User role in the appgroup table...yea?
