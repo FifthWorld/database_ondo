@@ -65,33 +65,42 @@ CREATE TABLE party.state_origin_type
 CREATE TABLE party.lga_type
 (
 	lga_id SERIAL  NOT NULL PRIMARY KEY,
-    state_id varchar(40) ,
+    state_code varchar(40) ,
     code varchar(20) NOT NULL,
     display_value varchar(250) NOT NULL,
     status char(1) NOT NULL,
     description varchar(555)
 );
 
-ALTER TABLE party.party ADD state_of_origin varchar(40); --to ref the state_id in party.state_origin_type
-ALTER TABLE party.party ADD lga_code varchar(40); --to ref the lga_id in party.lga_type
+ALTER TABLE party.party ADD state_code varchar(40); --to ref the 'code' column in party.state_origin_type
+ALTER TABLE party.party ADD lga_id varchar(40); --to ref the lga_id in party.lga_type
 ALTER TABLE party.party ADD home_town varchar(40);
 ALTER TABLE party.party ADD date_of_birth date;
 ALTER TABLE party.party ADD occupation varchar(40);
 ALTER TABLE party.party ADD corporate_name varchar(40);
 
+ALTER TABLE party.party_historic ADD state_code varchar(40); --to ref the 'code' column in party.state_origin_type
+ALTER TABLE party.party_historic ADD lga_id varchar(40); --to ref the lga_id in party.lga_type
+ALTER TABLE party.party_historic ADD home_town varchar(40);
+ALTER TABLE party.party_historic ADD date_of_birth date;
+ALTER TABLE party.party_historic ADD occupation varchar(40);
+ALTER TABLE party.party_historic ADD corporate_name varchar(40);
+
 --Adding present_home_address_id field
 ALTER TABLE party.party ADD present_home_address_id varchar(40);
-
-
-
 --Adding employer_name field
 ALTER TABLE party.party ADD employer_name varchar(40);
-
 --adding employer address id
 ALTER TABLE party.party ADD employer_address_id varchar(40);
 
+
+--Adding present_home_address_id field to party_historic
+ALTER TABLE party.party_historic ADD present_home_address_id varchar(40);
 --Adding employer_name field
---ALTER TABLE party.party ADD lga_id varchar(40);
+ALTER TABLE party.party_historic ADD employer_name varchar(40);
+--adding employer address id
+ALTER TABLE party.party_historic ADD employer_address_id varchar(40);
+
 
 ALTER TABLE party.party
 ADD CONSTRAINT party_employer_address_id FOREIGN KEY (employer_address_id)
@@ -105,19 +114,19 @@ ALTER TABLE party.party
       ON UPDATE CASCADE ON DELETE RESTRICT;
 
 ALTER TABLE party.party 
-     ADD CONSTRAINT party_lga_id_fk13 FOREIGN KEY (lga_code)
+     ADD CONSTRAINT party_lga_id_fk13 FOREIGN KEY (lga_id)
       REFERENCES party.lga_type (lga_id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 ALTER TABLE party.party 
-     ADD CONSTRAINT party_state_id_fk13 FOREIGN KEY (state_of_origin)
+     ADD CONSTRAINT party_state_id_fk13 FOREIGN KEY (state_code)
       REFERENCES party.state_origin_type (code) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 ALTER TABLE party.lga_type
-     ADD CONSTRAINT party_lga_type_fk13 FOREIGN KEY (state_id)
+     ADD CONSTRAINT party_lga_type_fk13 FOREIGN KEY (state_code)
       REFERENCES party.state_origin_type (code) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE RESTRICT;
 
@@ -189,8 +198,7 @@ INSERT INTO application.capacity_type (code, display_value ,description ,status)
 --ALTER TABLE application.application ALTER COLUMN nr TYPE character varying(45) USING nr::character;
 
 
---insert sample data into state of origin and lga of origin
-INSERT INTO party.state_origin_type (state_id, code, display_value ,description ,status) VALUES ()
+
 
 
 
@@ -210,9 +218,140 @@ CREATE OR REPLACE VIEW application.systematic_registration_certificates AS
 
 ALTER TABLE application.systematic_registration_certificates
   OWNER TO postgres;
-
-
-
-
-
+  
 --associate the newCofO service with the Super User role in the appgroup table...yea?
+insert into system.approle_appgroup(approle_code, appgroup_id) values('newCofO', 'super-group-id');
+
+
+--insert sample data into state of origin and lga of origin
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('abia', 'Abia','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('adamawa', 'Adamawa','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('akwaibom', 'Akwa-Ibom','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('anambra', 'Anambra','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('bauchi', 'Bauchi','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('bayelsa', 'Bayelsa','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('benue', 'Benue','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('borno', 'Borno','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('crossriver', 'Cross-River','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('delta', 'Delta','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('ebonyi', 'Ebonyi','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('edo', 'Edo','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('ekiti', 'Ekiti','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('enugu', 'Enugu','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('gombe', 'Gombe','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('imo', 'Imo','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('jigawa', 'Jigawa','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('kaduna', 'Kaduna','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('kano', 'Kano','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('katsina', 'Katsina','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('kebbi', 'Kebbi','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('kogi', 'Kogi','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('kwara', 'Kwara','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('lagos', 'Lagos','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('nasarawa', 'Nasarawa','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('niger', 'Niger','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('ogun', 'Ogun','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('ondo', 'Ondo','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('osun', 'Osun','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('oyo', 'Oyo','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('plateau', 'Plateau','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('rivers', 'Rivers','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('sokoto', 'Sokoto','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('taraba', 'Taraba','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('yobe', 'Yobe','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('zamfara', 'Zamfara','','c');
+INSERT INTO party.state_origin_type ( code, display_value ,description ,status) VALUES ('fct', 'FCT','','c');
+
+
+
+ -- Data for the table cadastre.land_use_type -- 
+
+DELETE FROM cadastre.land_use_type;
+
+
+insert into cadastre.land_use_type(code, display_value, status) values('commercial', 'Commercial', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('residential', 'Residential', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('industrial', 'Industrial', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricultural', 'Agricultural', 'c');
+
+
+--nullify the duplicate Ownership RRR type
+update administrative.rrr_type set status = 'x' where code = 'occupation';
+
+--enforce requiring certain document types for certain request types
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('approvedPlan','newCofO');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('idVerification','newCofO');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('ownershipEvidence','newCofO');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('taxClearance','newCofO');
+
+
+--insert new document types
+insert into source.administrative_source_type(code, display_value, description, status, is_for_registration) values('approvedPlan','Approved Survey Plan','','c','TRUE');
+insert into source.administrative_source_type(code, display_value, description, status, is_for_registration) values('ownershipEvidence','Evidence of Ownership','','c','TRUE');
+insert into source.administrative_source_type(code, display_value, description, status, is_for_registration) values('taxClearance','Tax Clearance Receipt/ Development Levy','','c','TRUE');
+
+
+--Now unto the codes for Locations et al
+CREATE TABLE application.location_code_type(
+   code varchar(20) NOT NULL PRIMARY KEY,
+   display_value varchar(250), 
+   status char(1), 
+   description varchar(555)
+);
+
+insert into application.location_code_type(code, display_value, status, description) values('A', 'Akure Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('W', 'Owo Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('N', 'Idanre/Ifedore Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('D', 'Ondo Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('K', 'Ikare Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('H', 'Oka Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('B', 'Igbokoda Area', 'c', '');
+insert into application.location_code_type(code, display_value, status, description) values('T', 'Okitipupa Area', 'c', '');
+
+
+alter table application.application_property add location_code varchar(20);
+
+alter table application.application_property 
+ADD CONSTRAINT location_code_fk FOREIGN KEY (location_code)
+      REFERENCES application.location_code_type (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+
+alter table application.application_property_historic add location_code varchar(20);
+
+alter table application.application_property_historic 
+ADD CONSTRAINT location_code_fk FOREIGN KEY (location_code)
+      REFERENCES application.location_code_type (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT;
+
+--drp the redundant apploication.land_use_type table
+drop table application.land_use_type;
+
+--alter the cadastre.land_use_type tables
+alter table cadastre.land_use_type add deemed_right_use_code varchar(50);
+alter table cadastre.land_use_type add allocation_use_code varchar(50);
+
+
+--land use codes to Alphabets
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('commercial', 'Commercial', 'c', 'C','B');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('industrial', 'Industrial', 'c','D','C');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('agricultural', 'Agricultural', 'c','A','F');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('residential', 'Residential', 'c','B','A');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('religious', 'Religious', 'c','G','D');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('recreational', 'Recreational', 'c','','E');
+insert into cadastre.land_use_type(code, display_value, status, deemed_right_use_code, allocation_use_code) values('educational', 'Educational', 'c','E','G');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
